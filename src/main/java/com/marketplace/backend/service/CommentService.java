@@ -35,7 +35,6 @@ public class CommentService {
     public Comment addComment(Long id, String comm) {
         Products product = productMapper.findById(id);
         User user = getCurrentUserId();
-        CommentJoin commentJoin = commentMapper.join(id);
         Comment comment = new Comment(product.getId(), product.getId(), user.getId(), comm);
         Notification notification = new Notification(user.getId(), product.getUserId(), "New comment", current);
         if (comment.getMessage() == null) {
@@ -51,8 +50,7 @@ public class CommentService {
     }
 
     public List<Comment> showComment(Long id) {
-        List<Comment> comments = commentMapper.allComments(id);
-        return comments;
+        return commentMapper.allComments(id);
     }
 
     public Comment deleteComment(Long id) {
