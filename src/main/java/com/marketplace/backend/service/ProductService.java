@@ -41,10 +41,10 @@ public class ProductService {
         products.setPrice(productRequest.getPrice());
         products.setDescription(productRequest.getDescription());
         products.setUserId(getCurrentUserId().getId());
-        products.setLikes(0L);
-        products.setDislikes(0L);
-        if (productRequest.getPrice() <= 0 || productRequest.getName() == null)
+        if (productRequest.getPrice() <= 0)
             throw new HandException("Price don't be null or 0");
+        if (productRequest.getName() == null)
+            throw new HandException("Fild name is required");
         productMapper.save(products);
 
         return products;

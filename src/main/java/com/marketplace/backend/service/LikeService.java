@@ -7,7 +7,10 @@ import com.marketplace.backend.mapper.LikeMapper;
 import com.marketplace.backend.mapper.NotificationMapper;
 import com.marketplace.backend.mapper.ProductMapper;
 import com.marketplace.backend.mapper.UserMapper;
-import com.marketplace.backend.model.*;
+import com.marketplace.backend.model.Like;
+import com.marketplace.backend.model.Notification;
+import com.marketplace.backend.model.Products;
+import com.marketplace.backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +31,8 @@ public class LikeService {
     private UserMapper userMapper;
     @Autowired
     private NotificationMapper notificationMapper;
+    @Autowired
+    private CommentService commentService;
 
     public com.marketplace.backend.model.User getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -56,6 +61,10 @@ public class LikeService {
         }
         Notification notification = new Notification(user.getId(), product.getUserId(), "Your product was liked", current);
         notificationMapper.save(notification);
+
+        product.setLikes(productMapper.countLike(id));
+        product.setDislikes(productMapper.countDislike(id));
+        product.setComments(commentService.showComment(id));
         return product;
     }
 
@@ -79,7 +88,11 @@ public class LikeService {
         } else {
             likeMapper.save(new Like(false, product.getId(), user.getId()));
         }
-        notificationMapper.save(new Notification(user.getId(),product.getUserId(),"Your product was disliked", current));
+        notificationMapper.save(new Notification(user.getId(), product.getUserId(), "Your product was disliked", current));
+
+        product.setLikes(productMapper.countLike(id));
+        product.setDislikes(productMapper.countDislike(id));
+        product.setComments(commentService.showComment(id));
         return product;
     }
 }
